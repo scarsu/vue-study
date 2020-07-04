@@ -21,18 +21,41 @@ class Store {
       return dispatch.call(store, type, payload)
     }
 
+
+    /* =======================天王盖地虎======================== */
     // getters
     // 1.遍历用户传入getters所有key，动态赋值，其值应该是函数执行结果
     // 2.确保它是响应式的，
     // Object.defineProperty(this.getters, key, {get(){}})
     // 3.缓存结果，可以利用computed
+    this._gettersFn = {}
+    this.getters = {}
+    for(let key in options.getters){
+      this._gettersFn[key] = function(store){
+        return options.getters[key](store._vm._data.$$state)
+      }
+    }
+
+    const computed = {}
+    for(let key in this._gettersFn){
+      let fn = this._gettersFn[key]
+      let store = this
+      computed[key] = function () {
+        return fn(store)
+      }
+      Object.defineProperty(this.getters, key, {
+        get: () => this._vm[key],
+        enumerable: true
+      })
+    }
     
 
     // 响应式的state
     this._vm = new KVue({
       data: {
         $$state: options.state
-      }      
+      },
+      computed
     })
   }
 

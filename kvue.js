@@ -135,9 +135,12 @@ class Compile {
         this[dir] && this[dir](node, exp)
       } 
       
-      else if(attrName.startWith('@')){
-        // 
-        
+      else if(attrName.startsWith('@')){
+        // @事件处理
+        const eventName = attrName.substring(1)
+        node.addEventListener(eventName,(e)=>{
+          this.$vm.$options.methods[exp].call(this.$vm, e)
+        })
       }
 
     })

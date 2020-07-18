@@ -119,7 +119,7 @@ interface Result<T> {
 
 // 装饰器：加工厂函数
 // 类装饰器
-function log(fn) {
+function log(fn:Function) {
   // 装饰器工厂: 返回一个装饰器
   return function (target:any) {
     // target就是Foo
